@@ -1,0 +1,38 @@
+---
+# Firewall settings - manage packet routes and permissions via iptables
+- name: Install netfilter and iptables-persistent packages
+  package:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  loop:
+    - netfilter-persistent
+    - iptables-persistent
+
+- name: Update iptables firewall rules - translation of IP addresses and ports
+  iptables:
+    table: nat
+    action: append
+    chain: POSTROUTING
+    out_interface: "{{ upst_iface_name }}"
+    jump: MASQUERADE
+
+- name: Update iptables firewall rules - forward upstream to downstream only for existing connections
+  iptables:
+    action: append
+    chain: FORWARD
+    in_interface: "{{ upst_iface_name }}"
+    out_interface: "{{ dwst_iface_name }}"
+    ctstate: RELATED,ESTABLISHED
+    jump: ACCEPT
+
+- name: Update iptables firewall rules - forward downstream to upstream
+  iptables:
+    action: append
+    chain: FORWARD
+    in_interface: "{{ dwst_iface_name }}"
+    out_interface: "{{ upst_iface_name }}"
+    jump: ACCEPT
+
+- name: Configure firewall rules to load at boot
+  command: netfilter-persistent save

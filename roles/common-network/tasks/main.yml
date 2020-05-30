@@ -1,0 +1,23 @@
+---
+# Generic role network interfaces
+
+- name: Determine system network interfaces for check
+  shell: ip -br link | awk '{ print $1 }'
+  register: iface_names
+
+- fail:
+    msg: "System mac addresses do not match those in variables. Please update variables in ./vars/main.yml."
+  when: (upst_iface_name not in iface_names.stdout_lines) or
+        (dwst_iface_name not in iface_names.stdout_lines) 
+
+- name: Enable ipv4 forwarding in /etc/sysctl.conf
+  lineinfile:
+    path: "/etc/sysctl.conf"
+    insertafter: "^#net.ipv4.ip_forward=*"
+    line: "net.ipv4.ip_forward=1"
+    state: present
+
+- name: Ensure wlan is unblocked
+  command: rfkill unblock wlan
+
+

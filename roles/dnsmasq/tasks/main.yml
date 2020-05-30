@@ -1,0 +1,32 @@
+---
+# dnsmasq - a lightweight dns and dhcp server(Enable dns/dhcp)
+- name: Install dns, dhcp
+  package:
+    name: dnsmasq
+    state: present
+    update_cache: yes
+
+- name: Configure downstream IP config
+  blockinfile:
+    path: "/etc/dhcpcd.conf"
+    insertafter: EOF
+    backup: yes
+    block: |
+      interface {{ dwst_iface_name }}
+          static ip_address={{ dwst_network_hostip }}/{{ dwst_network_cidr }}
+          nohook wpa_supplicant
+
+      # Prevent DHCP from accessing the following interfaces as client (not server_
+      denyinterfaces {{ upst_iface_name }}
+
+- name: Configure dnsmasq.conf
+  blockinfile:
+    path: "/etc/dnsmasq.conf"
+    insertafter: EOF
+    backup: yes
+    block: |
+      interface={{ dwst_iface_name }}
+      dhcp-range={{ dwst_network_dhcpstart }},{{ dwst_network_dhcpstop }},{{ dwst_network_netmask }},{{ dwst_dhcp_leaselen }}
+      domain={{ dwst_domain }}
+      address=/gw.{{ dwst_domain }}.com/{{ dwst_network_hostip }} # Alias for this router
+

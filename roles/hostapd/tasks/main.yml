@@ -1,0 +1,23 @@
+---
+# Host access point daemon
+# Config to create a access point, configured here for wifi
+- name: Install hostapd
+  package:
+    name: hostapd
+    state: present
+    update_cache: yes
+
+- name: Enable wireless access point, set to start on boot
+  systemd:
+    name: hostapd
+    masked: no
+    enabled: yes
+
+- name: Create hostapd directory if not present
+  file:
+    path: "/etc/hostapd"
+    state: directory
+
+- name: Configure host access point daemon (hostapd)
+  template: src="hostapd-iface.conf.j2" dest="/etc/hostapd/hostapd.conf"
+

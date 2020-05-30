@@ -1,0 +1,26 @@
+---
+
+# Upstream config
+upst_iface_name: eth0
+upst_iface_kernel: eth*
+
+# Downstream config
+dwst_iface_name: wlan0
+dwst_iface_kernel: wlan*
+dwst_domain: lifeofpi
+dwst_ssid: WiPi
+dwst_wpa_pass: bumbl3beescan'tFlywoutUmbr3llas
+dwst_network_hostip: 192.168.11.1
+dwst_network_dhcpstart: 192.168.11.50
+dwst_network_dhcpstop: 192.168.11.254
+dwst_network_netmask: 255.255.255.0
+dwst_network_cidr: 24
+dwst_dhcp_leaselen: 7d
+
+# Wifi config
+dwst_iface_country_code: US
+dwst_hwmode: n # Wifi hardware mode, i.e. a,b,g,n,ac,ax. Hardware dependent
+dwst_40MHzbw: False #Typically for 5GHz models, requires more bandwidth
+# More info: https://routerguide.net/setting-up-20-mhz-or-40-mhz-bandwidth-how-to-improve-wifi-network-performance/
+dwst_driver: nl80211
+dwst_channel: 6
