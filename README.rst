@@ -27,7 +27,9 @@ Instructions assume a default 'pi' user and sources cloned into the home directo
     git clone https://github.com/blakeflei/<repo>.git
 
 - Peruse and update any variables in the ./vars/main.yml::
+
     cd raspian_wifi_router 
+    
     nano vars/main.yml
 
 - Run ansible playbook::
